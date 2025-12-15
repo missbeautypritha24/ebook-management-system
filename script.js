@@ -1,77 +1,145 @@
-const bookContainer = document.getElementById("bookContainer");
-const searchInput = document.getElementById("searchInput");
-const categoryFilter = document.getElementById("categoryFilter");
+/* ================= GLOBAL ================= */
 
-// Preloaded 500 books
+const loginPage = document.getElementById("loginPage");
+const dashboard = document.getElementById("dashboard");
+const bookGrid = document.getElementById("bookGrid");
+
 let books = [];
-for (let i = 1; i <= 500; i++) {
-    books.push({
-        title: "Book Title " + i,
-        author: "Author " + ((i % 20) + 1),
-        category: ["Technology","Science","Fiction","Education","History"][i % 5],
-        price: "$" + ((i % 50) + 10),
-        rating: ((i % 5) + 1),
-        image: "https://via.placeholder.com/120x180?text=Book+" + i
-    });
+
+/* ================= AUTH ================= */
+
+function login() {
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+
+  if (user === "admin" && pass === "admin") {
+    loginPage.style.display = "none";
+    dashboard.style.display = "block";
+    loadBooks();
+  } else {
+    alert("❌ Invalid username or password");
+  }
 }
 
-// Display books
-function displayBooks(bookList) {
-    if(!bookContainer) return;
-    bookContainer.innerHTML = "";
-    bookList.forEach(book => {
-        const bookCard = document.createElement("div");
-        bookCard.className = "book-card";
-        bookCard.innerHTML = `
-            <img src="${book.image}" alt="${book.title}">
-            <h3>${book.title}</h3>
-            <p><strong>Author:</strong> ${book.author}</p>
-            <p><strong>Price:</strong> ${book.price}</p>
-            <p><strong>Rating:</strong> ${book.rating}/5</p>
-            <p class="category">${book.category}</p>
-        `;
-        bookContainer.appendChild(bookCard);
-    });
+function logout() {
+  localStorage.removeItem("books");
+  location.reload();
 }
 
-// Search functionality
-if(searchInput){
-    searchInput.addEventListener("keyup", () => {
-        const searchValue = searchInput.value.toLowerCase();
-        const filteredBooks = books.filter(book =>
-            book.title.toLowerCase().includes(searchValue) ||
-            book.author.toLowerCase().includes(searchValue) ||
-            book.category.toLowerCase().includes(searchValue)
-        );
-        displayBooks(filteredBooks);
-    });
+/* ================= LOAD BOOKS ================= */
+
+async function loadBooks() {
+  bookGrid.innerHTML = `<p style="opacity:.7">⏳ Loading 500 real books…</p>`;
+
+  // Load from cache if exists
+  const cached = localStorage.getItem("books");
+  if (cached) {
+    books = JSON.parse(cached);
+    renderBooks();
+    return;
+  }
+
+  books = [];
+  const subjects = [
+    "computer_science",
+    "artificial_intelligence",
+    "machine_learning",
+    "data_science",
+    "programming",
+    "software_engineering",
+    "algorithms",
+    "databases",
+    "networks",
+    "operating_systems"
+  ];
+
+  const seen = new Set();
+
+  for (const subject of subjects) {
+    try {
+      const res = await fetch(
+        `https://openlibrary.org/subjects/${subject}.json?limit=80`
+      );
+      const data = await res.json();
+
+      for (const b of data.works) {
+        if (
+          b.title &&
+          b.authors?.length &&
+          b.cover_id &&
+          !seen.has(b.key)
+        ) {
+          seen.add(b.key);
+
+          books.push({
+            name: b.title,
+            author: b.authors[0].name,
+            price: 250 + Math.floor(Math.random() * 750),
+            image: `https://covers.openlibrary.org/b/id/${b.cover_id}-L.jpg`
+          });
+        }
+
+        if (books.length >= 500) break;
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+
+    if (books.length >= 500) break;
+  }
+
+  books = books.slice(0, 500);
+  localStorage.setItem("books", JSON.stringify(books));
+  renderBooks();
 }
 
-if(categoryFilter){
-    categoryFilter.addEventListener("change", () => {
-        const category = categoryFilter.value;
-        const filteredBooks = category ? books.filter(book => book.category === category) : books;
-        displayBooks(filteredBooks);
-    });
+/* ================= RENDER ================= */
+
+function renderBooks() {
+  bookGrid.innerHTML = "";
+
+  books.forEach(book => {
+    const card = document.createElement("div");
+    card.className = "book-card";
+
+    card.innerHTML = `
+      <img src="${book.image}" alt="${book.name}">
+      <h4 title="${book.name}">${book.name}</h4>
+      <span>${book.author}</span><br>
+      <span>₹${book.price}</span>
+    `;
+
+    bookGrid.appendChild(card);
+  });
 }
 
-// Admin: Add book
-const addBookBtn = document.getElementById("addBookBtn");
-if(addBookBtn){
-    addBookBtn.addEventListener("click", () => {
-        const newBook = {
-            title: document.getElementById("bookTitle").value,
-            author: document.getElementById("bookAuthor").value,
-            category: document.getElementById("bookCategory").value,
-            price: document.getElementById("bookPrice").value,
-            rating: document.getElementById("bookRating").value,
-            image: document.getElementById("bookImage").value || "https://via.placeholder.com/120x180"
-        };
-        books.push(newBook);
-        alert("Book added successfully!");
-        displayBooks(books);
-    });
-}
+/* ================= ADD BOOK ================= */
 
-// Initial Load
-displayBooks(books);
+function addBook() {
+  const name = bookName.value.trim();
+  const auth = author.value.trim();
+  const pr = price.value.trim();
+  const img = image.value.trim();
+
+  if (!name || !auth || !pr) {
+    alert("⚠ Please fill all required fields");
+    return;
+  }
+
+  books.unshift({
+    name,
+    author: auth,
+    price: pr,
+    image: img || "https://picsum.photos/300/450"
+  });
+
+  localStorage.setItem("books", JSON.stringify(books));
+  renderBooks();
+
+  bookName.value = "";
+  author.value = "";
+  price.value = "";
+  image.value = "";
+
+  alert("✅ Book added successfully");
+}

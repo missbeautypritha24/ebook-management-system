@@ -1,132 +1,157 @@
-/* Reset & base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background-color: #f0f2f5;
-    color: #333;
+  background: radial-gradient(circle at top, #2b004f, #000);
+  color: white;
+  min-height: 100vh;
 }
 
-/* Header */
-header {
-    background: linear-gradient(90deg, #4e54c8, #8f94fb);
-    color: white;
-    padding: 20px;
-    text-align: center;
+/* ================= LOGIN ================= */
+
+#loginPage {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-header nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-    font-weight: bold;
+.login-box {
+  background: linear-gradient(145deg, #12001f, #1c0033);
+  padding: 40px;
+  width: 350px;
+  border-radius: 15px;
+  box-shadow: 0 0 40px rgba(255, 0, 255, 0.3);
+  text-align: center;
 }
 
-header nav a:hover {
-    text-decoration: underline;
+.login-box h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  color: #ff4ecd;
 }
 
-/* Search Section */
-.search-section {
-    display: flex;
-    justify-content: center;
-    margin: 20px;
-    gap: 10px;
+.login-box p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
 }
 
-.search-section input, .search-section select {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  background: #000;
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: white;
 }
 
-/* Book Cards */
-.book-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 20px;
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: linear-gradient(90deg, crimson, royalblue, violet);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  transform: scale(1.03);
+}
+
+.hint {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* ================= DASHBOARD ================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background: #0b0016;
+  border-bottom: 1px solid #333;
+}
+
+.logout {
+  background: crimson;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+/* CONTROLS */
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+
+.controls input {
+  padding: 10px;
+  background: #000;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 6px;
+}
+
+.controls button {
+  background: linear-gradient(90deg, violet, royalblue);
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* BOOK GRID */
+
+.book-grid {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
 }
 
 .book-card {
-    background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  background: #12001f;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+  transition: 0.3s;
 }
 
 .book-card:hover {
-    transform: scale(1.05);
+  transform: translateY(-5px);
 }
 
 .book-card img {
-    width: 120px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 10px;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
-.book-card h3 {
-    margin-bottom: 5px;
+.book-card h4 {
+  margin-top: 10px;
+  font-size: 14px;
 }
 
-.book-card p {
-    font-size: 14px;
-    margin: 3px 0;
-}
-
-.category {
-    color: #4e54c8;
-    font-weight: bold;
-}
-
-/* Login & Admin */
-.login-container, .admin-container {
-    max-width: 400px;
-    margin: 50px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.login-container input, .admin-container input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-.login-container button, .admin-container button {
-    padding: 10px 20px;
-    background-color: #4e54c8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.login-container button:hover, .admin-container button:hover {
-    background-color: #3b40a4;
-}
-
-/* Footer */
-footer {
-    background-color: #4e54c8;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    margin-top: 20px;
+.book-card span {
+  font-size: 12px;
+  opacity: 0.7;
 }
