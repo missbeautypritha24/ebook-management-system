@@ -1,29 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>KitabGhar - Ebook Management System</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>KitabGhar - Professional Ebook Management</title>
+<style>
+/* Base Styles */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Arial,sans-serif; }
+body { background:#f0f2f5; color:#333; }
+header { background: linear-gradient(90deg,#4e54c8,#8f94fb); color:white; padding:20px; text-align:center; }
+header h1 { margin-bottom:5px; }
+nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold; }
+nav a:hover { text-decoration:underline; }
+
+/* Search & Filter */
+.search-section { display:flex; justify-content:center; margin:20px; gap:10px; flex-wrap:wrap; }
+.search-section input, .search-section select { padding:10px; font-size:16px; border-radius:5px; border:1px solid #ccc; }
+
+/* Book Cards */
+.book-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; padding:20px; }
+.book-card { background:white; padding:15px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.2s; display:flex; flex-direction:column; align-items:center; }
+.book-card:hover { transform:scale(1.05); }
+.book-card img { width:120px; height:180px; object-fit:cover; border-radius:5px; margin-bottom:10px; }
+.book-card h3 { margin-bottom:5px; text-align:center; }
+.book-card p { font-size:14px; margin:3px 0; text-align:center; }
+.category { color:#4e54c8; font-weight:bold; }
+
+/* Login/Admin */
+.form-container { max-width:400px; margin:50px auto; background:white; padding:30px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; display:none; }
+.form-container.active { display:block; }
+.form-container input { width:90%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ccc; }
+.form-container button { padding:10px 20px; background:#4e54c8; color:white; border:none; border-radius:5px; cursor:pointer; }
+.form-container button:hover { background:#3b40a4; }
+
+/* Footer */
+footer { background:#4e54c8; color:white; text-align:center; padding:10px; margin-top:20px; }
+
+/* Buttons */
+button.logout { background:#e74c3c; margin-left:10px; }
+button.logout:hover { background:#c0392b; }
+</style>
 </head>
 <body>
 
 <header>
-    <h1>📚 KitabGhar</h1>
-    <p>Ebook Management System</p>
+<h1>📚 KitabGhar</h1>
+<p>Professional Ebook Management System</p>
+<nav>
+<a href="#" id="showLogin">Login</a>
+<a href="#" id="showAdmin">Admin</a>
+<button class="logout" id="logoutBtn" style="display:none;">Logout</button>
+</nav>
 </header>
 
-<section class="search-section">
-    <input type="text" id="searchInput" placeholder="Search by book title or author...">
+<section class="search-section" id="searchSection">
+<input type="text" id="searchInput" placeholder="Search by title, author, category...">
+<select id="categoryFilter">
+<option value="">All Categories</option>
+<option value="Technology">Technology</option>
+<option value="Science">Science</option>
+<option value="Fiction">Fiction</option>
+<option value="Education">Education</option>
+<option value="History">History</option>
+</select>
 </section>
 
-<section class="book-container" id="bookContainer">
-    <!-- Books will be loaded here -->
-</section>
+<section class="book-container" id="bookContainer"></section>
+
+<div class="form-container" id="loginForm">
+<h2>Login</h2>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+<button id="loginBtn">Login</button>
+</div>
+
+<div class="form-container" id="adminForm">
+<h2>Admin Panel - Add Book</h2>
+<input type="text" id="bookTitle" placeholder="Book Title">
+<input type="text" id="bookAuthor" placeholder="Author">
+<input type="text" id="bookCategory" placeholder="Category">
+<input type="text" id="bookPrice" placeholder="Price">
+<input type="text" id="bookRating" placeholder="Rating (1-5)">
+<input type="text" id="bookImage" placeholder="Image URL">
+<button id="addBookBtn">Add Book</button>
+</div>
 
 <footer>
-    <p>© 2025 KitabGhar | Ebook Management System</p>
+<p>© 2025 KitabGhar | Ebook Management System</p>
 </footer>
 
-<script src="script.js"></script>
+<script>
+// Sample user/admin (for prototype)
+let currentUser = null;
+const adminUser = "admin"; const adminPass = "admin123";
+
+// Preload 500 books
+let books = [];
+for(let i=1;i<=500;i++){
+books.push({title:"Book "+i,author:"Author "+((i%20)+1),category:["Technology","Science","Fiction","Education","History"][i%5],price:"$"+((i%50)+10),rating:((i%5)+1),image:"https://via.placeholder.com/120x180?text=Book+"+i});
+}
+
+// DOM Elements
+const bookContainer = document.getElementById("bookContainer");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const loginForm = document.getElementById("loginForm");
+const adminForm = document.getElementById("adminForm");
+const showLogin = document.getElementById("showLogin");
+const showAdmin = document.getElementById("showAdmin");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Display books
+function displayBooks(list){
+bookContainer.innerHTML="";
+list.forEach(book=>{
+const card=document.createElement("div");
+card.className="book-card";
+card.innerHTML=`<img src="${book.image}" alt="${book.title}"><h3>${book.title}</h3><p><strong>Author:</strong> ${book.author}</p><p><strong>Price:</strong> ${book.price}</p><p><strong>Rating:</strong> ${book.rating}/5</p><p class="category">${book.category}</p>`;
+bookContainer.appendChild(card);
+});
+}
+displayBooks(books);
+
+// Search
+searchInput.addEventListener("keyup",()=>{
+const val=searchInput.value.toLowerCase();
+const filtered=books.filter(b=>b.title.toLowerCase().includes(val)||b.author.toLowerCase().includes(val)||b.category.toLowerCase().includes(val));
+displayBooks(filtered);
+});
+categoryFilter.addEventListener("change",()=>{
+const cat=categoryFilter.value;
+const filtered=cat?books.filter(b=>b.category===cat):books;
+displayBooks(filtered);
+});
+
+// Login UI
+showLogin.addEventListener("click",()=>{
+loginForm.classList.add("active"); adminForm.classList.remove("active"); searchSection.style.display="none";
+});
+showAdmin.addEventListener("click",()=>{
+loginForm.classList.add("active"); adminForm.classList.add("active"); searchSection.style.display="none";
+});
+
+// Login
+document.getElementById("loginBtn").addEventListener("click",()=>{
+const u=document.getElementById("username").value;
+const p=document.getElementById("password").value;
+if(u===adminUser&&p===adminPass){alert("Admin logged in"); currentUser="admin"; loginForm.classList.remove("active"); searchSection.style.display="flex"; logoutBtn.style.display="inline-block";}
+else{alert("Invalid credentials");}
+});
+
+// Logout
+logoutBtn.addEventListener("click",()=>{currentUser=null; logoutBtn.style.display="none";alert("Logged out");});
+
+// Admin add book
+document.getElementById("addBookBtn").addEventListener("click",()=>{
+if(currentUser!=="admin"){alert("Access denied! Login as admin"); return;}
+const newBook={title:document.getElementById("bookTitle").value,author:document.getElementById("bookAuthor").value,category:document.getElementById("bookCategory").value,price:document.getElementById("bookPrice").value,rating:document.getElementById("bookRating").value,image:document.getElementById("bookImage").value||"https://via.placeholder.com/120x180"};
+books.push(newBook);alert("Book added!"); displayBooks(books);
+});
+</script>
+
 </body>
 </html>
