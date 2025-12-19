@@ -20,7 +20,7 @@
 
     <button onclick="login()">Login</button>
 
-    <span class="hint">hint: pritha24/pritha24</span>
+    <span class="hint">hint: admin / admin</span>
   </div>
 </div>
 
@@ -32,6 +32,7 @@
     <button class="logout" onclick="logout()">Logout</button>
   </header>
 
+  <!-- ADD BOOK CONTROLS -->
   <section class="controls">
     <input type="text" id="bookName" placeholder="Book Title">
     <input type="text" id="author" placeholder="Author">
@@ -40,6 +41,7 @@
     <button onclick="addBook()">Add Book</button>
   </section>
 
+  <!-- BOOK LIST (Delete buttons will be injected via JS here) -->
   <section class="books">
     <div id="bookGrid" class="book-grid"></div>
   </section>

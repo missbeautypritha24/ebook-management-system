@@ -31,7 +31,6 @@ function logout() {
 async function loadBooks() {
   bookGrid.innerHTML = `<p style="opacity:.7">⏳ Loading 500 real books…</p>`;
 
-  // Load from cache if exists
   const cached = localStorage.getItem("books");
   if (cached) {
     books = JSON.parse(cached);
@@ -93,12 +92,12 @@ async function loadBooks() {
   renderBooks();
 }
 
-/* ================= RENDER ================= */
+/* ================= RENDER BOOKS ================= */
 
 function renderBooks() {
   bookGrid.innerHTML = "";
 
-  books.forEach(book => {
+  books.forEach((book, index) => {
     const card = document.createElement("div");
     card.className = "book-card";
 
@@ -107,10 +106,30 @@ function renderBooks() {
       <h4 title="${book.name}">${book.name}</h4>
       <span>${book.author}</span><br>
       <span>₹${book.price}</span>
+
+      <div class="book-actions">
+        <button class="delete-btn" onclick="deleteBook(${index})">
+          Delete
+        </button>
+      </div>
     `;
 
     bookGrid.appendChild(card);
   });
+}
+
+/* ================= DELETE BOOK ================= */
+
+function deleteBook(index) {
+  const confirmDelete = confirm(
+    `🗑 Are you sure you want to delete:\n"${books[index].name}" ?`
+  );
+
+  if (!confirmDelete) return;
+
+  books.splice(index, 1);
+  localStorage.setItem("books", JSON.stringify(books));
+  renderBooks();
 }
 
 /* ================= ADD BOOK ================= */

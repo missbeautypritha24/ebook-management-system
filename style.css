@@ -93,7 +93,7 @@ body {
   cursor: pointer;
 }
 
-/* CONTROLS */
+/* ================= CONTROLS ================= */
 
 .controls {
   display: grid;
@@ -118,7 +118,7 @@ body {
   cursor: pointer;
 }
 
-/* BOOK GRID */
+/* ================= BOOK GRID ================= */
 
 .book-grid {
   padding: 20px;
@@ -133,6 +133,7 @@ body {
   padding: 10px;
   box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
   transition: 0.3s;
+  position: relative;
 }
 
 .book-card:hover {
@@ -154,4 +155,32 @@ body {
 .book-card span {
   font-size: 12px;
   opacity: 0.7;
+}
+
+/* ================= DELETE BUTTON ================= */
+
+.book-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.delete-btn {
+  background: linear-gradient(90deg, #ff0033, #cc0000);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(90deg, #ff3366, #ff0000);
+  transform: scale(1.05);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
 }
